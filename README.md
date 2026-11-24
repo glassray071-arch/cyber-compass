@@ -29,6 +29,11 @@ A native version lives in [`android/`](android). GitHub Actions builds it on eve
 **Install:** open **[Releases](https://github.com/glassray071-arch/cyber-compass/releases/latest)**
 on your phone → download `CyberCompass.apk` → open it → allow installing from your browser.
 
+**GLOBE mode (3D):** a holographic Earth, heading-up, showing where you are, your heading beam,
+the great-circle path to **true north** (geographic pole + Earth's spin axis), the path to the
+**magnetic north dip pole** (computed on-device from the World Magnetic Model), declination and distances.
+Drag to orbit, double-tap to reset.
+
 App extras: fused gyro-assisted heading, sensor calibration status, MARK / TRUE / CALIBRATE
 buttons, and automatic magnetic declination for true north (uses your location once).
 

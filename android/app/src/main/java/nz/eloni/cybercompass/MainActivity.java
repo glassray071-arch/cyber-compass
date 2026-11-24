@@ -48,7 +48,14 @@ public class MainActivity extends Activity implements SensorEventListener, Compa
         view.setCallbacks(this);
         view.trueMode = prefs.getBoolean("trueMode", false);
         view.declination = prefs.getFloat("declination", Float.NaN);
+        view.lat = prefs.getFloat("lat", Float.NaN);
+        view.lon = prefs.getFloat("lon", Float.NaN);
         setContentView(view);
+        findMagneticPole();
+        if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            fetchLocation();
+        }
 
         sm = (SensorManager) getSystemService(SENSOR_SERVICE);
         rotationSensor = sm.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
@@ -153,14 +160,49 @@ public class MainActivity extends Activity implements SensorEventListener, Compa
     @Override
     public void onTrueModeChanged(boolean on) {
         prefs.edit().putBoolean("trueMode", on).apply();
-        if (on) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                fetchDeclination();
-            } else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQ_LOCATION);
-            }
+        if (on) ensureLocation();
+    }
+
+    @Override
+    public void onGlobeModeChanged(boolean on) {
+        if (on) ensureLocation();
+    }
+
+    private void ensureLocation() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            fetchLocation();
+        } else {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQ_LOCATION);
         }
+    }
+
+    /**
+     * Finds the north magnetic (dip) pole with the phone's own World Magnetic Model:
+     * the point where the field's inclination is closest to straight down.
+     */
+    private void findMagneticPole() {
+        new Thread(() -> {
+            long now = System.currentTimeMillis();
+            float bestLat = 90, bestLon = 0, best = -999;
+            for (int la = 70; la <= 89; la++) {
+                for (int lo = -180; lo < 180; lo += 3) {
+                    float inc = new GeomagneticField(la, lo, 0, now).getInclination();
+                    if (inc > best) { best = inc; bestLat = la; bestLon = lo; }
+                }
+            }
+            float cLat = bestLat, cLon = bestLon;
+            for (float la = cLat - 1.5f; la <= Math.min(89.9f, cLat + 1.5f); la += 0.1f) {
+                for (float lo = cLon - 8f; lo <= cLon + 8f; lo += 0.25f) {
+                    float inc = new GeomagneticField(la, lo, 0, now).getInclination();
+                    if (inc > best) { best = inc; bestLat = la; bestLon = lo; }
+                }
+            }
+            if (bestLon > 180) bestLon -= 360;
+            if (bestLon < -180) bestLon += 360;
+            view.magPoleLon = bestLon;
+            view.magPoleLat = bestLat;
+        }, "mag-pole").start();
     }
 
     @Override
@@ -168,13 +210,13 @@ public class MainActivity extends Activity implements SensorEventListener, Compa
         super.onRequestPermissionsResult(requestCode, permissions, results);
         if (requestCode != REQ_LOCATION) return;
         if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
-            fetchDeclination();
-        } else if (Float.isNaN(view.declination)) {
-            view.showToast("LOCATION DENIED - TRUE NORTH NEEDS IT ONCE", 5000);
+            fetchLocation();
+        } else if (Float.isNaN(view.lat)) {
+            view.showToast("LOCATION DENIED - NEEDED ONCE FOR TRUE N / GLOBE", 5000);
         }
     }
 
-    private void fetchDeclination() {
+    private void fetchLocation() {
         lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (lm == null) return;
         Location best = null;
@@ -196,10 +238,10 @@ public class MainActivity extends Activity implements SensorEventListener, Compa
         else if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) provider = LocationManager.GPS_PROVIDER;
         if (provider == null) {
             if (best != null) applyLocation(best);
-            else view.showToast("TURN ON LOCATION TO GET TRUE NORTH", 5000);
+            else view.showToast("TURN ON LOCATION FOR TRUE N / GLOBE", 5000);
             return;
         }
-        view.showToast("ACQUIRING LOCATION FOR DECLINATION...", 4000);
+        view.showToast("ACQUIRING LOCATION...", 4000);
         stopLocation();
         pendingListener = new LocationListener() {
             @Override public void onLocationChanged(Location location) {
@@ -221,7 +263,9 @@ public class MainActivity extends Activity implements SensorEventListener, Compa
                 (float) l.getAltitude(), System.currentTimeMillis());
         float d = gf.getDeclination();
         view.declination = d;
-        prefs.edit().putFloat("declination", d).apply();
+        view.lat = (float) l.getLatitude();
+        view.lon = (float) l.getLongitude();
+        prefs.edit().putFloat("declination", d).putFloat("lat", view.lat).putFloat("lon", view.lon).apply();
         view.showToast(String.format(java.util.Locale.US, "DECLINATION %+.1f° LOCKED", d), 4000);
     }
 
