@@ -22,6 +22,16 @@ Pure Python, no extra packages.
   PITCH  -0.5° ROLL  +1.0° ◎ LEVEL
 ```
 
+
+## 📱 Android app (APK) – no Termux needed
+A native version lives in [`android/`](android). GitHub Actions builds it on every push.
+
+**Install:** open **[Releases](https://github.com/glassray071-arch/cyber-compass/releases/latest)**
+on your phone → download `CyberCompass.apk` → open it → allow installing from your browser.
+
+App extras: fused gyro-assisted heading, sensor calibration status, MARK / TRUE / CALIBRATE
+buttons, and automatic magnetic declination for true north (uses your location once).
+
 ## Features
 - Rotating neon dial with radar sweep, magenta north needle and fixed lubber line
 - Scrolling heading tape + big segmented heading readout, 16-point cardinal
@@ -38,7 +48,7 @@ Pure Python, no extra packages.
 2. In Termux:
    ```bash
    pkg install git
-   git clone https://github.com/<your-username>/cyber-compass
+   git clone https://github.com/glassray071-arch/cyber-compass
    cd cyber-compass
    bash install.sh
    cyber-compass

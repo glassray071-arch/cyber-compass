@@ -1,0 +1,42 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'nz.eloni.cybercompass'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'nz.eloni.cybercompass'
+        minSdk 26
+        targetSdk 34
+        versionCode Integer.parseInt(System.getenv('GITHUB_RUN_NUMBER') ?: '1')
+        versionName "1.0." + (System.getenv('GITHUB_RUN_NUMBER') ?: '0')
+    }
+
+    signingConfigs {
+        // Fixed key committed to the repo so every build can update the
+        // previous install without "app not installed" signature errors.
+        shared {
+            storeFile file('cybercompass.keystore')
+            storePassword 'cybercompass'
+            keyAlias 'cybercompass'
+            keyPassword 'cybercompass'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.shared
+        }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.shared
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
