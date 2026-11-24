@@ -120,6 +120,7 @@ class SensorFeed(threading.Thread):
         self.error = None
         self.proc = None
         self.stopping = False
+        self.other = ""
 
     def _lp(self, old, new):
         if old is None:
@@ -127,9 +128,11 @@ class SensorFeed(threading.Thread):
         a = self.alpha
         return tuple(o + a * (n - o) for o, n in zip(old, new))
 
-    def _handle(self, obj):
+    def _on_sample(self, obj):
         if not isinstance(obj, dict):
             return
+        if not any(isinstance(d, dict) and "values" in d for d in obj.values()):
+            self.other = json.dumps(obj)[:160]
         for name, data in obj.items():
             vals = data.get("values") if isinstance(data, dict) else None
             if not vals or len(vals) < 3:
@@ -156,8 +159,49 @@ class SensorFeed(threading.Thread):
                 self.samples += 1
                 self.last = time.time()
 
+    @staticmethod
+    def discover():
+        """Ask termux-sensor for the phone's sensor list and pick the best
+        accelerometer + magnetometer by their full names."""
+        try:
+            r = subprocess.run(["termux-sensor", "-l"], capture_output=True,
+                               text=True, timeout=15)
+        except FileNotFoundError:
+            raise RuntimeError("termux-sensor not found. Run: pkg install termux-api")
+        except subprocess.TimeoutExpired:
+            raise RuntimeError("termux-sensor -l timed out. Is the Termux:API app "
+                               "installed (same source as Termux) and allowed to run?")
+        raw = (r.stdout or "").strip()
+        try:
+            names = json.loads(raw).get("sensors", [])
+        except Exception:
+            raise RuntimeError("termux-sensor -l gave: " + (raw or r.stderr.strip() or "nothing")[:160])
+
+        def pick(words, avoid):
+            best = None
+            for n in names:
+                low = n.lower()
+                if any(w in low for w in words) and not any(a in low for a in avoid):
+                    score = 2 if "uncalib" not in low else 1
+                    if best is None or score > best[0]:
+                        best = (score, n)
+            return best[1] if best else None
+        acc = pick(("accelerometer", "accel"), ("linear", "gravity", "uncalib"))
+        mag = pick(("magnet",), ("rotation", "orientation"))
+        if not acc or not mag:
+            raise RuntimeError("no accelerometer/magnetometer found. Sensors: " +
+                               ", ".join(names)[:200])
+        return acc, mag
+
     def run(self):
-        cmd = ["termux-sensor", "-s", "accel,magnet", "-d", str(self.delay_ms)]
+        try:
+            acc, mag = self.discover()
+        except RuntimeError as e:
+            self.error = str(e)
+            return
+        with self.lock:
+            self.names = {"acc": acc, "mag": mag}
+        cmd = ["termux-sensor", "-s", acc + "," + mag, "-d", str(self.delay_ms)]
         try:
             self.proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE, text=True,
@@ -181,14 +225,17 @@ class SensorFeed(threading.Thread):
                     buf = s
                     break
                 buf = s[end:]
-                self._handle(obj)
+                self._on_sample(obj)
         if not self.stopping:
             err = ""
             try:
                 err = self.proc.stderr.read().strip()
             except Exception:
                 pass
-            self.error = "sensor stream ended" + (": " + err[:120] if err else "")
+            detail = err or self.other
+            self.error = ("sensor stream ended" + (": " + detail[:160] if detail else
+                          " with no output. Test with: termux-sensor -s \"" +
+                          ",".join(self.names.values()) + "\" -n 1"))
 
     def snapshot(self):
         with self.lock:
@@ -503,7 +550,7 @@ def draw_panel(cv, y, st):
                            ("Δ%+4d° " % int(round(d)), "white"), (turn, "pink")])
     msg = st.get("msg")
     if msg:
-        cv.segs(x, y + 3, [msg])
+        cv.segs(x, y + 3, msg)
     else:
         src = st["src"]
         cv.segs(x, y + 3, [("SRC   ", "grey"), (src[: cv.w - 10], "deep")])
@@ -539,7 +586,11 @@ def frame(w, h, st, t):
     cv = Canvas(w, h)
     draw_header(cv, st["live"], st["demo"])
     if st["hdg"] is None:
-        lines = st["wait"]
+        import textwrap
+        lines = []
+        for txt, col in st["wait"]:
+            for part in (textwrap.wrap(txt, max(10, w - 4)) or [""]):
+                lines.append((part, col))
         for i, (txt, col) in enumerate(lines):
             cv.center(h // 2 - len(lines) // 2 + i, txt[: w - 2], col)
         return cv.render()
@@ -578,8 +629,10 @@ def selftest():
     st = dict(hdg=123.4, pitch=1.0, roll=-2.0, field=48.0, mark=200, ref="MAG",
               src="test", live=True, demo=True, msg=None, wait=[])
     for w, h in ((40, 30), (60, 45), (120, 30), (30, 12)):
-        out = frame(w, h, st, 1.0)
-        assert out.count("\n") == h - 1
+        for m in (None, [("CALIBRATE ", "yel"), ("figure-8", "white")]):
+            st["msg"] = m
+            out = frame(w, h, st, 1.0)
+            assert out.count("\n") == h - 1
     print("selftest OK  (max heading error %.6f°)" % worst)
 
 
