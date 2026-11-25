@@ -1,0 +1,54 @@
+name: Cyber Toolkit APK
+
+on:
+  push:
+    branches: [main, toolkit]
+    paths:
+      - 'toolkit/**'
+      - '.github/workflows/toolkit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Check Termux version
+        run: python3 -m py_compile toolkit/cyber_toolkit.py
+
+      - name: Build APK
+        working-directory: toolkit/android
+        run: gradle assembleRelease --no-daemon --stacktrace
+
+      - name: Collect APK
+        run: cp toolkit/android/app/build/outputs/apk/release/app-release.apk CyberToolkit.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CyberToolkit-apk
+          path: CyberToolkit.apk
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: toolkit-v1.0.${{ github.run_number }}
+          name: Cyber Toolkit APK v1.0.${{ github.run_number }}
+          body: |
+            **CYBER//TOOLKIT** – 23 sensor & camera tools in one neon app.
+            Download **CyberToolkit.apk** below on your Android phone and open it to install.
+            (Allow your browser / Files app to "install unknown apps" when asked.)
+          files: CyberToolkit.apk
+          make_latest: false

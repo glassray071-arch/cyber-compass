@@ -6,3 +6,7 @@ android/build/
 android/app/build/
 android/local.properties
 *.apk
+toolkit/android/.gradle/
+toolkit/android/build/
+toolkit/android/app/build/
+toolkit/android/local.properties

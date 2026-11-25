@@ -37,6 +37,11 @@ Drag to orbit, double-tap to reset.
 App extras: fused gyro-assisted heading, sensor calibration status, MARK / TRUE / CALIBRATE
 buttons, and automatic magnetic declination for true north (uses your location once).
 
+## 🧰 Also in this repo: CYBER//TOOLKIT
+16 sensor tools in one app – Wi-Fi radar, level, metal detector, vibration meter, sound meter
+with 50 Hz hum detection, sonar, seismograph, strobe tachometer and more.
+See **[toolkit/](toolkit)** – APK under [Releases](https://github.com/glassray071-arch/cyber-compass/releases).
+
 ## Features
 - Rotating neon dial with radar sweep, magenta north needle and fixed lubber line
 - Scrolling heading tape + big segmented heading readout, 16-point cardinal
