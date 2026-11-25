@@ -13,28 +13,28 @@ final class Tools {
             "WI-FI RADAR", "COMPASS", "LEVEL / ANGLE", "METAL DETECT",
             "VIBRATION", "LIGHT METER", "MOTION ALARM", "SITE LOGGER",
             "SOUND METER", "SONAR", "SEISMOGRAPH", "BAROMETER",
-            "GYRO TACHO", "TORCH/STROBE", "MEASURE WALK", "SENSORS"
+            "GYRO TACHO", "TORCH/STROBE", "MEASURE WALK", "SENSORS", "LEAK HUNTER"
     };
 
     static final String[] DESCS = {
-            "networks + distance", "tilt-compensated", "bubble, slope, zero", "studs, screws, rebar",
+            "networks + distance", "tilt-compensated", "bubble, slope, zero", "metal + AC field",
             "Hz, RPM, severity", "lux min/max/avg", "tamper siren", "GPS + note + photo",
             "dB, pitch, 50Hz hum", "echo rangefinder", "quake detector", "altitude + floors",
-            "RPM + turn count", "SOS, morse, strobe", "pace out distance", "every sensor, live"
+            "RPM + turn count", "SOS, morse, strobe", "pace out distance", "every sensor, live", "air leaks by hiss"
     };
 
     static final String[] GLYPHS = {
             "((•))", "N▲", "─●─", "⊕",
             "∿∿∿", "☼", "⚠", "⌖",
             "dB", ")))", "/\\/\\", "hPa",
-            "RPM", "✺", "↔", "{ }"
+            "RPM", "✺", "↔", "{ }", "~»"
     };
 
     static final int[] COLORS = {
             Neon.GREEN, Neon.CYAN, Neon.YEL, Neon.MAG,
             Neon.ORANGE, Neon.YEL, Neon.RED, Neon.CYAN,
             Neon.MAG, Neon.GREEN, Neon.ORANGE, Neon.CYAN,
-            Neon.GREEN, Neon.YEL, Neon.MAG, Neon.CYAN
+            Neon.GREEN, Neon.YEL, Neon.MAG, Neon.CYAN, Neon.GREEN
     };
 
     static Tool make(int i, MainActivity a) {
@@ -55,6 +55,7 @@ final class Tools {
             case 13: return new TorchTool(a);
             case 14: return new StepTool(a);
             case 15: return new ExplorerTool(a);
+            case 16: return new LeakTool(a);
             default: return null;
         }
     }
@@ -70,7 +71,8 @@ final class Tools {
             case 5: return sm.getDefaultSensor(Sensor.TYPE_LIGHT) != null;
             case 7: return pm.hasSystemFeature(PackageManager.FEATURE_LOCATION);
             case 8:
-            case 9: return pm.hasSystemFeature(PackageManager.FEATURE_MICROPHONE);
+            case 9:
+            case 16: return pm.hasSystemFeature(PackageManager.FEATURE_MICROPHONE);
             case 11: return sm.getDefaultSensor(Sensor.TYPE_PRESSURE) != null;
             case 12: return sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE) != null;
             case 13: return pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);

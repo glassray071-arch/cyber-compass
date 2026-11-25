@@ -1,6 +1,6 @@
 # ▓▒░ CYBER//TOOLKIT ░▒▓
 
-16 sensor tools in one neon app – as a native **Android APK** and as a **Termux** script.
+17 sensor tools in one neon app – as a native **Android APK** and as a **Termux** script.
 No ads, no internet permission, no tracking.
 
 ## 📱 Install the APK
@@ -14,7 +14,7 @@ Every push to `toolkit/` builds a new version that installs over the old one.
 | 1 | Wi-Fi Radar | Wi-Fi | Nearby networks on a radar, distance estimated from signal |
 | 2 | Compass | Mag + gyro | Tilt-compensated, true north from your location |
 | 3 | Level / Angle | Accelerometer | Bubble level, edge slope in ° / % / 1-in-X, ZERO for relative angles |
-| 4 | Metal Detector | Magnetometer | Screws, studs, rebar, magnets – Geiger beeps |
+| 4 | Metal Detector | Magnetometer | Screws, studs, rebar, magnets – Geiger beeps. **AC FIELD** mode traces cables *carrying current* via their 50 Hz field (never use to prove dead) |
 | 5 | Vibration | Accelerometer | RMS, peak Hz → RPM, velocity mm/s with ISO 10816-style band, spectrum |
 | 6 | Light Meter | Light | Lux min/max/avg + rough AS/NZS 1680 guide |
 | 7 | Motion Alarm | Accelerometer | Tamper siren, voice, notification |
@@ -27,11 +27,13 @@ Every push to `toolkit/` builds a new version that installs over the old one.
 | 14 | Torch / Strobe | Camera flash | Torch, SOS, Morse messages, **strobe tachometer**, screen light |
 | 15 | Measure Walk | Step detector | Pace out distances, calibrate stride over 10 m |
 | 16 | Sensors | All | Every sensor in the phone with live values and specs |
+| 17 | Leak Hunter | Microphone + rotation | Air/gas/vacuum leak hiss in the 8–22 kHz band vs background, Geiger feedback, **sweep heat map** (pocket acoustic camera) |
 
 Tools your phone has no hardware for are greyed out.
 
-> Readings are indicative – not calibrated test equipment. The metal detector does **not**
-> find live cables; always prove dead with a proper tester.
+> Readings are indicative – not calibrated test equipment. AC FIELD only sees cables that are
+> carrying load current; a live cable with nothing switched on is invisible. Always prove dead
+> with an approved voltage indicator.
 
 ## 🐍 Termux version
 `cyber_toolkit.py` has the first 9 tools in a terminal UI:

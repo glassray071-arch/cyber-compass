@@ -47,7 +47,7 @@ jobs:
           tag_name: toolkit-v1.0.${{ github.run_number }}
           name: Cyber Toolkit APK v1.0.${{ github.run_number }}
           body: |
-            **CYBER//TOOLKIT** – 16 sensor tools in one neon app.
+            **CYBER//TOOLKIT** – 17 sensor tools in one neon app.
             Download **CyberToolkit.apk** below on your Android phone and open it to install.
             (Allow your browser / Files app to "install unknown apps" when asked.)
           files: CyberToolkit.apk
