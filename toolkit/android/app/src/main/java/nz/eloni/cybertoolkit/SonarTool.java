@@ -59,6 +59,11 @@ public class SonarTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "The speaker and main mic are both on the BOTTOM edge. Point the bottom of the phone straight at a flat wall.";
+    }
+
+    @Override
     void onStart() {
         act.needPerms(new String[]{Manifest.permission.RECORD_AUDIO}, null,
                 () -> status = "MICROPHONE PERMISSION DENIED");

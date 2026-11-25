@@ -98,6 +98,11 @@ public class LeakTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "Main mic = BOTTOM-edge pinhole: point the bottom edge at fittings. SWEEP MAP: aim the BACK like a camera.";
+    }
+
+    @Override
     void onStart() {
         haveRot = listen(Sensor.TYPE_ROTATION_VECTOR, SensorManager.SENSOR_DELAY_GAME)
                 || listen(Sensor.TYPE_GAME_ROTATION_VECTOR, SensorManager.SENSOR_DELAY_GAME);

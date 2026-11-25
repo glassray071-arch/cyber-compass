@@ -48,6 +48,11 @@ public class SoundTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "The main mic is the pinhole on the BOTTOM edge, left of the USB-C port. Point the bottom edge at the noise and don't cover it.";
+    }
+
+    @Override
     void onStart() {
         act.needPerms(new String[]{Manifest.permission.RECORD_AUDIO}, this::startRec,
                 () -> status = "MICROPHONE PERMISSION DENIED");

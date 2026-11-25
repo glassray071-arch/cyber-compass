@@ -28,6 +28,11 @@ public class LevelTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "Flat: the camera island makes it rock on its back, so lay it SCREEN-DOWN. Edge: use the LEFT side (no buttons) or the top edge.";
+    }
+
+    @Override
     void onStart() {
         listen(Sensor.TYPE_ACCELEROMETER, SensorManager.SENSOR_DELAY_GAME);
     }

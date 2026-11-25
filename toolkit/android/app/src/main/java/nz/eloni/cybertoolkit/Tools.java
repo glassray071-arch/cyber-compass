@@ -13,28 +13,32 @@ final class Tools {
             "WI-FI RADAR", "COMPASS", "LEVEL / ANGLE", "METAL DETECT",
             "VIBRATION", "LIGHT METER", "MOTION ALARM", "SITE LOGGER",
             "SOUND METER", "SONAR", "SEISMOGRAPH", "BAROMETER",
-            "GYRO TACHO", "TORCH/STROBE", "MEASURE WALK", "SENSORS", "LEAK HUNTER"
+            "GYRO TACHO", "TORCH/STROBE", "MEASURE WALK", "SENSORS", "LEAK HUNTER",
+            "MAGNIFIER", "LIGHT FLICKER", "HEIGHT METER", "CAM SENTRY", "PULSE", "S26 SENSOR MAP"
     };
 
     static final String[] DESCS = {
             "networks + distance", "tilt-compensated", "bubble, slope, zero", "metal + AC field",
             "Hz, RPM, severity", "lux min/max/avg", "tamper siren", "GPS + note + photo",
             "dB, pitch, 50Hz hum", "echo rangefinder", "quake detector", "altitude + floors",
-            "RPM + turn count", "SOS, morse, strobe", "pace out distance", "every sensor, live", "air leaks by hiss"
+            "RPM + turn count", "SOS, morse, strobe", "pace out distance", "every sensor, live", "air leaks by hiss",
+            "zoom, colour ID, IR", "LED/driver flicker %", "poles, walls, trees", "motion photo alarm", "fingertip heart rate", "where sensors are"
     };
 
     static final String[] GLYPHS = {
             "((•))", "N▲", "─●─", "⊕",
             "∿∿∿", "☼", "⚠", "⌖",
             "dB", ")))", "/\\/\\", "hPa",
-            "RPM", "✺", "↔", "{ }", "~»"
+            "RPM", "✺", "↔", "{ }", "~»",
+            "[+]", "≋%", "▲m", "◉!", "♥", "▣?"
     };
 
     static final int[] COLORS = {
             Neon.GREEN, Neon.CYAN, Neon.YEL, Neon.MAG,
             Neon.ORANGE, Neon.YEL, Neon.RED, Neon.CYAN,
             Neon.MAG, Neon.GREEN, Neon.ORANGE, Neon.CYAN,
-            Neon.GREEN, Neon.YEL, Neon.MAG, Neon.CYAN, Neon.GREEN
+            Neon.GREEN, Neon.YEL, Neon.MAG, Neon.CYAN, Neon.GREEN,
+            Neon.CYAN, Neon.YEL, Neon.GREEN, Neon.RED, Neon.MAG, Neon.ORANGE
     };
 
     static Tool make(int i, MainActivity a) {
@@ -56,6 +60,12 @@ final class Tools {
             case 14: return new StepTool(a);
             case 15: return new ExplorerTool(a);
             case 16: return new LeakTool(a);
+            case 17: return new MagnifierTool(a);
+            case 18: return new FlickerTool(a);
+            case 19: return new HeightTool(a);
+            case 20: return new SentryTool(a);
+            case 21: return new PulseTool(a);
+            case 22: return new SensorMapTool(a);
             default: return null;
         }
     }
@@ -76,7 +86,13 @@ final class Tools {
             case 11: return sm.getDefaultSensor(Sensor.TYPE_PRESSURE) != null;
             case 12: return sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE) != null;
             case 13: return pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
-            case 15: return true;
+            case 15:
+            case 22: return true;
+            case 17:
+            case 18:
+            case 19:
+            case 20:
+            case 21: return pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
             default: return sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null;
         }
     }

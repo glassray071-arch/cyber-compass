@@ -34,6 +34,11 @@ public class VibrationTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "Press it SCREEN-DOWN on the machine (with a case), or hold the LEFT edge hard against the bearing housing.";
+    }
+
+    @Override
     void onStart() {
         count = 0;
         listen(Sensor.TYPE_ACCELEROMETER, SensorManager.SENSOR_DELAY_FASTEST);

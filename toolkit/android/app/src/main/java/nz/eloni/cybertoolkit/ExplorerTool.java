@@ -30,6 +30,11 @@ public class ExplorerTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "Tap any sensor for live data. SENSOR MAP shows where each one is on the S26.";
+    }
+
+    @Override
     void onStart() {
         if (sel != null) sm.registerListener(this, sel, SensorManager.SENSOR_DELAY_GAME);
     }

@@ -67,6 +67,11 @@ public class StepTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "Hold it in your hand or keep it in a pocket and walk normally. Calibrate once with CAL 10 m.";
+    }
+
+    @Override
     void onStart() {
         Runnable det = () -> {
             useDetector = listen(Sensor.TYPE_STEP_DETECTOR, SensorManager.SENSOR_DELAY_FASTEST);

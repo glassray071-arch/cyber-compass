@@ -80,6 +80,11 @@ public class LoggerTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "The GPS antenna is in the top of the phone. Keep the top edge pointing at the sky and take it out of your pocket for a fix.";
+    }
+
+    @Override
     void onStart() {
         List<String> perms = new ArrayList<>();
         perms.add(Manifest.permission.ACCESS_FINE_LOCATION);

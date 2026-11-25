@@ -72,6 +72,11 @@ public class TorchTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "The LED flash is on the BACK, just right of the camera island (top-left). Point the back at the target.";
+    }
+
+    @Override
     void onStart() {
         try {
             for (String id : cm.getCameraIdList()) {

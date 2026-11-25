@@ -109,6 +109,11 @@ public class MetalTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "The compass chip is near the TOP. Sweep with the top half of the back, about 1 cm off the wall. Mark the exact spot in SENSOR MAP.";
+    }
+
+    @Override
     void onStart() {
         recal();
         register();

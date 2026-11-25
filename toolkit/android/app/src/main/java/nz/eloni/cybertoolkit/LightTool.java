@@ -34,6 +34,11 @@ public class LightTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "The light sensor is under the screen at the TOP, by the selfie camera. Face the screen at the light and keep the top uncovered.";
+    }
+
+    @Override
     void onStart() {
         listen(Sensor.TYPE_LIGHT, SensorManager.SENSOR_DELAY_UI);
     }

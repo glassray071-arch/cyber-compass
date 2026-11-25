@@ -58,6 +58,11 @@ public class WifiRadarTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "Hold it upright in the open. Keep your hand off the top and bottom of the frame - the Wi-Fi antennas are there.";
+    }
+
+    @Override
     void onStart() {
         act.needPerms(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, () -> {
             IntentFilter f = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);

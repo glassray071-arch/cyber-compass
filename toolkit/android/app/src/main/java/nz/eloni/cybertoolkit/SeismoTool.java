@@ -46,6 +46,11 @@ public class SeismoTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "Lay it SCREEN-DOWN on a cloth on a solid floor (the camera island stops it sitting flat). Don't touch it.";
+    }
+
+    @Override
     void onStart() {
         grav = null;
         warm = 0;

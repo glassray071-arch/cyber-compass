@@ -38,6 +38,11 @@ public class BaroTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "The barometer breathes through the frame. Don't grip it tightly and keep it out of wind and air-con drafts.";
+    }
+
+    @Override
     void onStart() {
         listen(Sensor.TYPE_PRESSURE, SensorManager.SENSOR_DELAY_UI);
     }

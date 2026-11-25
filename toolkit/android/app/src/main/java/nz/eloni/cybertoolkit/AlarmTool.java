@@ -74,6 +74,11 @@ public class AlarmTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "Lay it on the item you want to guard (toolbox, laptop, bag). Any way up works.";
+    }
+
+    @Override
     void onStart() {
         listen(Sensor.TYPE_ACCELEROMETER, SensorManager.SENSOR_DELAY_GAME);
         tts = new TextToSpeech(act, s -> {

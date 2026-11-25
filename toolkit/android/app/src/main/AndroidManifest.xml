@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <!-- Sound meter + sonar -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Camera tools (magnifier, flicker, height, sentry, pulse) -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <!-- Measure walk (step detector) -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <!-- Motion alarm -->
@@ -29,6 +31,7 @@
     <uses-feature android:name="android.hardware.location" android:required="false" />
     <uses-feature android:name="android.hardware.microphone" android:required="false" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
     <uses-feature android:name="android.hardware.camera.flash" android:required="false" />
 
     <queries>

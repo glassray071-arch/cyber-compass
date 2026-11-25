@@ -74,6 +74,11 @@ public abstract class Tool extends View implements SensorEventListener {
 
     void onTap(float x, float y) {}
 
+    /** One or two short lines telling the user how to point the S26 at the subject. */
+    String aim() {
+        return null;
+    }
+
     void onScroll(float dy) {}
 
     final void start() {
@@ -142,7 +147,19 @@ public abstract class Tool extends View implements SensorEventListener {
                 drawBtn(c, b);
             }
         }
-        body.set(0, headerH, w, (rows == 0 ? h : top) - gap);
+        float bodyBottom = (rows == 0 ? h : top) - gap;
+        String aim = aim();
+        if (aim != null) {
+            float stripH = 34 * dp;
+            bodyBottom -= stripH;
+            fill.setStyle(Paint.Style.FILL);
+            fill.setColor(Neon.alpha(Neon.YEL, 0x18));
+            c.drawRect(0, bodyBottom, w, bodyBottom + stripH, fill);
+            fill.setColor(Neon.YEL);
+            c.drawRect(0, bodyBottom, 3 * dp, bodyBottom + stripH, fill);
+            drawAim(c, aim, 10 * dp, bodyBottom + 14 * dp, w - 16 * dp);
+        }
+        body.set(0, headerH, w, bodyBottom);
         c.save();
         c.clipRect(body);
         drawBody(c, body);
@@ -208,6 +225,30 @@ public abstract class Tool extends View implements SensorEventListener {
     @Override
     public boolean performClick() {
         return super.performClick();
+    }
+
+    private void drawAim(Canvas c, String s, float x, float y, float maxW) {
+        p.setTypeface(Neon.MONO);
+        p.setTextSize(10.5f * dp);
+        String[] words = ("S26 ▸ " + s).split(" ");
+        StringBuilder line = new StringBuilder();
+        int lines = 0;
+        for (String wd : words) {
+            String trial = line.length() == 0 ? wd : line + " " + wd;
+            if (p.measureText(trial) > maxW && line.length() > 0) {
+                text(c, line.toString(), x, y + lines * 13 * dp, 10.5f, Neon.YEL, Paint.Align.LEFT, false);
+                lines++;
+                line.setLength(0);
+                line.append(wd);
+                if (lines >= 2) return;
+            } else {
+                line.setLength(0);
+                line.append(trial);
+            }
+        }
+        if (line.length() > 0 && lines < 2) {
+            text(c, line.toString(), x, y + lines * 13 * dp, 10.5f, Neon.YEL, Paint.Align.LEFT, false);
+        }
     }
 
     // ---------------------------------------------------------------- helpers

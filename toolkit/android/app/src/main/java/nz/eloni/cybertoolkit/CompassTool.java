@@ -40,6 +40,11 @@ public class CompassTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "Hold it flat and level with the top edge pointing forward. Take off any magnetic case or ring first.";
+    }
+
+    @Override
     void onStart() {
         useRot = listen(Sensor.TYPE_ROTATION_VECTOR, SensorManager.SENSOR_DELAY_GAME);
         if (!useRot) listen(Sensor.TYPE_ACCELEROMETER, SensorManager.SENSOR_DELAY_GAME);

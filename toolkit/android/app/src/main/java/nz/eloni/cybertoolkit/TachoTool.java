@@ -40,6 +40,11 @@ public class TachoTool extends Tool {
     }
 
     @Override
+    String aim() {
+        return "Tape it SCREEN-UP with the CENTRE of the phone over the rotation axis. Use AXIS for other mounting positions.";
+    }
+
+    @Override
     void onStart() {
         lastTs = 0;
         listen(Sensor.TYPE_GYROSCOPE, SensorManager.SENSOR_DELAY_GAME);
